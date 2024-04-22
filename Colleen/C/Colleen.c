@@ -1,24 +1,35 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-static char* print() {
-    return (
-    "#include <stdio.h>\n\n" \
-    "static char* print() {\n" \
-    "    return (\"Hello, World!\");\n" \
-    "}\n\n" \
-    "int main(void) {\n" \
-    "    //---------------------------------First Comment---------------------------------//\n" \
-    "    printf(\"%s\\n\", print());\n" \
-    "    return (0);\n" \
-    "}\n\n" \
-    "//---------------------------------Second Comment---------------------------------//"
-    );
+char    *loadFile(const char *filename) {
+    char *buffer = NULL;
+    long length;
+    
+    FILE *file = fopen(filename, "rb");
+
+    if (file) {
+        fseek(file, 0, SEEK_END);
+        length = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        buffer = malloc(length + 1);
+        if (buffer) {
+            fread(buffer, 1, length, file);
+            buffer[length] = '\0';
+        }
+        fclose(file);
+    }
+    return buffer;
 }
 
-int main(void) {
+int main() {
     //---------------------------------First Comment---------------------------------//
-    printf("%s\n", print());
-    return (0);
+    char *content = loadFile("Colleen.c");
+
+    if (content) {
+        printf("%s\n", content);
+        free(content);
+    }
+    return 0;
 }
 
 //---------------------------------Second Comment---------------------------------//
